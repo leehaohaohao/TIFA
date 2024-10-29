@@ -1,0 +1,4 @@
+jwt:
+  secret: tifaTtifaItifaFtifaAtifaTtifaITF
+  expire: 3600
+  token: Authorization

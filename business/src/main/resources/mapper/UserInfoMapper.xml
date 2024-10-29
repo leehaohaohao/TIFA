@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tifa.common.mapper.UserInfoMapper">
+    <resultMap id="base_result_map" type="com.tifa.common.entity.dto.UserInfoDto">
+        <id column="id" property="id"/>
+        <result column="phone" property="phone"/>
+        <result column="username" property="username"/>
+        <result column="avatar" property="avatar"/>
+        <result column="email" property="email"/>
+        <result column="password" property="password"/>
+        <result column="create_date" property="createDate"/>
+    </resultMap>
+    <sql id="base_column_list">
+        id,phone,username,avatar,email,create_date,password
+    </sql>
+    <sql id="base_condition">
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+            <if test="phone != null and phone != '' ">
+                and phone = #{phone}
+            </if>
+            <if test="username != null and username != '' ">
+                and username = #{username}
+            </if>
+            <if test="email != null and email != '' ">
+                and email = #{email}
+            </if>
+            <if test="createDate != null">
+                and create_date = #{createDate}
+            </if>
+        </where>
+    </sql>
+    <select id="selectUserById" resultMap="base_result_map">
+        select <include refid="base_column_list"/>
+        from user_info
+        where id = #{id}
+    </select>
+    <select id="selectUserByEmail" resultMap="base_result_map">
+        select <include refid="base_column_list"/>
+        from user_info
+        where email = #{email}
+    </select>
+    <insert id="insertUser" parameterType="com.tifa.common.entity.dto.UserInfoDto">
+        insert into user_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="phone != null and phone != ''">
+                phone,
+            </if>
+            <if test="username != null and username != ''">
+                username,
+            </if>
+            <if test="email != null and email != ''">
+                email,
+            </if>
+            <if test="avatar != null and avatar != ''">
+                avatar,
+            </if>
+            <if test="password != null and password != ''">
+                password,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="phone != null and phone != ''">
+                #{phone},
+            </if>
+            <if test="username != null and username != ''">
+                #{username},
+            </if>
+            <if test="email != null and email != ''">
+                #{email},
+            </if>
+            <if test="avatar != null and avatar != ''">
+                #{avatar},
+            </if>
+            <if test="password != null and password != ''">
+                #{password},
+            </if>
+            <if test="createDate != null">
+                #{createDate},
+            </if>
+        </trim>
+    </insert>
+
+
+</mapper>
