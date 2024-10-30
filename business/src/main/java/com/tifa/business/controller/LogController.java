@@ -5,28 +5,33 @@ import cn.hutool.core.util.StrUtil;
 import com.tifa.common.config.SysConfig;
 import com.tifa.common.config.jwt.JwtProperty;
 import com.tifa.common.config.jwt.JwtUtil;
-import com.tifa.common.entity.co.LoginCo;
-import com.tifa.common.entity.co.RegisterCo;
+import com.tifa.common.entity.co.log.CodeCo;
+import com.tifa.common.entity.co.log.LoginCo;
+import com.tifa.common.entity.co.log.RegisterCo;
 import com.tifa.common.entity.constants.ExceptionConstants;
 import com.tifa.common.entity.dto.ResponsePack;
 import com.tifa.common.entity.dto.UserInfoDto;
 import com.tifa.common.entity.po.BusinessException;
 import com.tifa.common.entity.po.UserContext;
+import com.tifa.common.entity.vo.CodeVo;
 import com.tifa.common.mapper.UserInfoMapper;
 import com.tifa.common.utils.NumUtils;
+import com.wf.captcha.SpecCaptcha;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
-
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
-
 /**
  * 登陆、注册控制器
  *
@@ -36,11 +41,13 @@ import java.util.regex.Pattern;
  */
 @RestController
 @AllArgsConstructor
+@CrossOrigin
+@Slf4j
 public class LogController {
     private final UserInfoMapper userInfoMapper;
     private final JwtProperty jwtProperty;
     private final SysConfig sysConfig;
-
+    private final ConcurrentHashMap<String,CodeCo> codeCoMap = new ConcurrentHashMap<>();
     /**
      * 登陆
      * @param request
@@ -49,9 +56,17 @@ public class LogController {
      * @throws BusinessException
      */
     @PostMapping("/login")
-    public ResponsePack index(HttpServletRequest request, @RequestBody LoginCo loginCo) throws BusinessException {
+    public ResponsePack login(HttpServletRequest request, @RequestBody LoginCo loginCo) throws BusinessException {
+        //验证验证码
+        if( StrUtil.hasBlank(loginCo.getCodeId()) ||
+                codeCoMap.get(loginCo.getCodeId()) == null ||
+                !codeCoMap.get(loginCo.getCodeId()).getCode().equals(loginCo.getCode())
+        ){
+            throw new BusinessException(ExceptionConstants.CODE_ERROR);
+        }
+        codeCoMap.remove(loginCo.getCodeId());
         // 登陆参数校验
-        if(StrUtil.hasBlank(loginCo.getEmail(),loginCo.getPassword())){
+        if(StrUtil.hasBlank(loginCo.getEmail(),loginCo.getPassword(),loginCo.getCode())){
             throw new BusinessException(ExceptionConstants.SERVER_ERROR);
         }
         // 查询用户
@@ -78,7 +93,6 @@ public class LogController {
         String token = JwtUtil.createJwt(jwtProperty.getJWT_SECRET(), jwtProperty.getJWT_EXPIRE(), claims);
         return ResponsePack.success(token);
     }
-
     /**
      * 注册
      * @param registerCo
@@ -87,10 +101,19 @@ public class LogController {
      */
     @PostMapping("/register")
     public ResponsePack register(@RequestBody RegisterCo registerCo) throws BusinessException {
+        //验证验证码
+        if( StrUtil.hasBlank(registerCo.getCodeId()) ||
+        codeCoMap.get(registerCo.getCodeId()) == null ||
+                !codeCoMap.get(registerCo.getCodeId()).getCode().equals(registerCo.getCode())
+        ){
+            throw new BusinessException(ExceptionConstants.CODE_ERROR);
+        }
+        codeCoMap.remove(registerCo.getCodeId());
         // 注册参数校验
         if(StrUtil.hasBlank(registerCo.getEmail(),registerCo.getPassword())){
             throw new BusinessException(ExceptionConstants.SERVER_ERROR);
         }
+        //检查用户是否存在
         if(userInfoMapper.selectUserByEmail(registerCo.getEmail())!=null){
             throw new BusinessException(ExceptionConstants.SERVER_ERROR);
         }
@@ -109,6 +132,47 @@ public class LogController {
             throw new BusinessException(ExceptionConstants.SERVER_ERROR);
         }
         return ResponsePack.success(null);
+    }
+
+    /**
+     * 获取验证码图片
+     * @param
+     * @return
+     * @throws BusinessException
+     */
+    @PostMapping("/code")
+    public ResponsePack getCode() throws BusinessException {
+        //创建一个验证码对象
+        SpecCaptcha captcha = new SpecCaptcha(130,48,5);
+        //设置模式位字母数字混合
+        captcha.setCharType(SpecCaptcha.TYPE_DEFAULT);
+        String code = captcha.text().toLowerCase();
+        log.info("验证码:{}",code);
+        CodeCo codeCo = new CodeCo();
+        codeCo.setCode(code);
+        codeCo.setCreateDate(System.currentTimeMillis());
+        String id = String.valueOf(UUID.randomUUID());
+        codeCo.setId(id);
+        codeCoMap.put(id,codeCo);
+        CodeVo codeVo = new CodeVo();
+        codeVo.setId(id);
+        codeVo.setBase64(captcha.toBase64());
+        //返回验证码图片
+        return ResponsePack.success(codeVo);
+    }
+
+    /**
+     * 定时清理验证码缓存
+     */
+    @Scheduled(fixedRate = 60*1000*10)
+    private void clearCode(){
+        log.debug("正在清理验证码缓存");
+        int initSize = codeCoMap.size();
+        codeCoMap.entrySet().removeIf(entry->entry.getValue().getCreateDate()+60*1000<System.currentTimeMillis());
+        int endSize = codeCoMap.size();
+        if(initSize!=endSize){
+            log.debug("清理验证码缓存成功,清理前数量:{},清理后数量:{},共清理{}",initSize,endSize,initSize-endSize);
+        }
     }
     /**
      * 构建userContext
@@ -132,7 +196,6 @@ public class LogController {
         userContext.setProxyIp(proxyIp);
         return userContext;
     }
-
     /**
      * 校验ipv6地址
      * @param ipv6
@@ -149,7 +212,6 @@ public class LogController {
             return false;
         }
     }
-
     /**
      * 检查邮箱
      * @param email
@@ -160,7 +222,6 @@ public class LogController {
         Pattern pattern = Pattern.compile(emailRegex);
         return pattern.matcher(email).matches();
     }
-
     /**
      * 检查密码
      * @param password

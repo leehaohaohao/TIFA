@@ -9,6 +9,7 @@ package com.tifa.common.entity.constants;
  */
 public class ExceptionConstants {
     public static final String LOG_ERROR = "账号或密码错误";
+    public static final String CODE_ERROR = "验证码错误";
     public static final String INVALID_REGISTER_INFO = "注册信息不符合要求";
     public static final String FILE_NOT_EXIST = "文件不存在";
     public static final String FILE_IS_EXIST = "文件已存在";

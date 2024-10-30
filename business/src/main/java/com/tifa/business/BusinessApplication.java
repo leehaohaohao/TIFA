@@ -3,9 +3,11 @@ package com.tifa.business;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(scanBasePackages = "com.tifa")
 @MapperScan(basePackages = "com.tifa.common.mapper")
+@EnableScheduling
 public class BusinessApplication {
 
     public static void main(String[] args) {

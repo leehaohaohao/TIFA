@@ -13,12 +13,18 @@
     <description>business</description>
     <properties>
         <java.version>17</java.version>
+        <captcha.verion>1.6.2</captcha.verion>
     </properties>
     <dependencies>
         <dependency>
             <groupId>com.tifa</groupId>
             <artifactId>common</artifactId>
             <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.whvcse</groupId>
+            <artifactId>easy-captcha</artifactId>
+            <version>${captcha.verion}</version>
         </dependency>
     </dependencies>
     <build>

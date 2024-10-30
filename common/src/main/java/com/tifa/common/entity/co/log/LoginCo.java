@@ -1,4 +1,4 @@
-package com.tifa.common.entity.co;
+package com.tifa.common.entity.co.log;
 
 import lombok.Data;
 
@@ -15,4 +15,8 @@ public class LoginCo {
     private String email;
     //密码
     private String password;
+    //验证码
+    private String code;
+    //验证码id
+    private String codeId;
 }
