@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 /**
  * 登陆、注册控制器
- *
+ * TODO 限流
  * @author lihao
  * &#064;date  2024/10/29--19:00
  * @since 1.0
@@ -60,7 +60,7 @@ public class LogController {
         //验证验证码
         if( StrUtil.hasBlank(loginCo.getCodeId()) ||
                 codeCoMap.get(loginCo.getCodeId()) == null ||
-                !codeCoMap.get(loginCo.getCodeId()).getCode().equals(loginCo.getCode())
+                !codeCoMap.get(loginCo.getCodeId()).getCode().toLowerCase().equals(loginCo.getCode())
         ){
             throw new BusinessException(ExceptionConstants.CODE_ERROR);
         }
@@ -104,7 +104,7 @@ public class LogController {
         //验证验证码
         if( StrUtil.hasBlank(registerCo.getCodeId()) ||
         codeCoMap.get(registerCo.getCodeId()) == null ||
-                !codeCoMap.get(registerCo.getCodeId()).getCode().equals(registerCo.getCode())
+                !codeCoMap.get(registerCo.getCodeId()).getCode().toLowerCase().equals(registerCo.getCode())
         ){
             throw new BusinessException(ExceptionConstants.CODE_ERROR);
         }
@@ -121,7 +121,6 @@ public class LogController {
         if(!checkEmail(registerCo.getEmail()) || !checkPassword(registerCo.getPassword())){
             throw new BusinessException(ExceptionConstants.INVALID_REGISTER_INFO);
         }
-        //TODO 机器人验证
         UserInfoDto userInfoDto = new UserInfoDto();
         userInfoDto.setEmail(registerCo.getEmail());
         userInfoDto.setPassword(DigestUtils.md5DigestAsHex(registerCo.getPassword().getBytes()));
@@ -164,7 +163,7 @@ public class LogController {
     /**
      * 定时清理验证码缓存
      */
-    @Scheduled(fixedRate = 60*1000*10)
+    @Scheduled(fixedRate = 1000*10*60)
     private void clearCode(){
         log.debug("正在清理验证码缓存");
         int initSize = codeCoMap.size();
