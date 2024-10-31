@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sensitiveword.mapper.ApiKeysMapper">
+    <resultMap id="base_result_map" type="com.sensitiveword.entity.ApiKeys">
+        <id column="id" property="id"/>
+        <result column="access_key" property="accessKey"/>
+        <result column="secret_key" property="secretKey"/>
+        <result column="create_date" property="createDate"/>
+        <result column="status" property="status"/>
+        <result column="phone" property="phone"/>
+    </resultMap>
+    <sql id="base_column_list">
+        id,access_key,secret_key,create_date,status,phone
+    </sql>
+    <insert id="insert" parameterType="com.sensitiveword.entity.ApiKeys">
+        INSERT INTO api_keys(id,access_key,secret_key,create_date,status,phone)
+        VALUES (#{id},#{accessKey},#{secretKey},#{createDate},#{status},#{phone})
+    </insert>
+    <select id="selectByPhone" resultMap="base_result_map">
+        select <include refid="base_column_list"/> from api_keys
+        where phone = #{phone}
+    </select>
+    <select id="selectByAccessKey" resultMap="base_result_map">
+        select <include refid="base_column_list"/> from api_keys
+        where access_key = #{accessKey}
+    </select>
+</mapper>

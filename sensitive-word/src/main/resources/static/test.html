@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>密钥测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        label, input, button {
+            display: block;
+            margin: 10px 0;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+        }
+        input[type="text"] {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #e8e8e8;
+            padding: 10px;
+            border: 1px solid #ccc;
+            white-space: pre-wrap; /* 自动换行 */
+            word-wrap: break-word; /* 自动换行 */
+        }
+    </style>
+    <script>
+        async function testKey() {
+            const accessKey = document.getElementById('accessKey').value;
+            const secretKey = document.getElementById('secretKey').value;
+            const text = document.getElementById('text').value;
+
+            if (!accessKey || !secretKey) {
+                alert("请输入访问密钥和秘密密钥。");
+                return;
+            }
+
+            const timestamp = Date.now().toString();
+            const nonce = Math.random().toString(36).substring(2);
+
+            const params = {
+                timestamp: timestamp,
+                nonce: nonce
+            };
+
+            const data = createDataString(params);
+            const signature = await generateSignature(data, secretKey);
+
+            const headers = new Headers();
+            headers.append("AccessKey", accessKey);
+            headers.append("Signature", signature);
+            headers.append("Timestamp", timestamp);
+            headers.append("Nonce", nonce);
+            headers.append("Content-Type", "application/json");
+
+            const response = await fetch('http://localhost:8001/sensitive/text/check', {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({ text: text })
+            });
+
+            const result = await response.text();
+            document.getElementById('result').innerText = result;
+        }
+
+        function createDataString(params) {
+            const data = Object.keys(params).sort().map(key => `${key}=${params[key]}`).join('&');
+            return data;
+        }
+
+        async function generateSignature(data, secretKey) {
+            const encoder = new TextEncoder();
+            const key = await crypto.subtle.importKey(
+                "raw",
+                encoder.encode(secretKey),
+                { name: "HMAC", hash: "SHA-256" },
+                false,
+                ["sign"]
+            );
+            const signature = await crypto.subtle.sign(
+                "HMAC",
+                key,
+                encoder.encode(data)
+            );
+            return Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+    </script>
+</head>
+<body>
+<h1>密钥测试</h1>
+<label for="accessKey">访问密钥：</label>
+<input type="text" id="accessKey" placeholder="请输入访问密钥"><br>
+<label for="secretKey">秘密密钥：</label>
+<input type="text" id="secretKey" placeholder="请输入秘密密钥"><br>
+<label for="text">参数1：</label>
+<input type="text" id="text" placeholder="请输入要检测的文本"><br>
+<button onclick="testKey()">测试密钥</button>
+<h2>结果</h2>
+<pre id="result"></pre>
+</body>
+</html>

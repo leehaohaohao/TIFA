@@ -15,7 +15,7 @@ import lombok.Getter;
 public enum ObjStatusEnum {
     NORMAL(0, "正常"),
     SELLING(1, "在售"),
-    SOLD_OUT(2, "售罄"),
+    SOLD_OUT(2, "已售"),
     AFTER_SALE(3, "售后"),
     DELETED(4, "已删除");
     // 状态码

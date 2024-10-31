@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>密钥生成器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        label, input, button {
+            display: block;
+            margin: 10px 0;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #e8e8e8;
+            padding: 10px;
+            border: 1px solid #ccc;
+            white-space: pre-wrap; /* 自动换行 */
+            word-wrap: break-word; /* 自动换行 */
+        }
+    </style>
+    <script>
+        async function generateKey() {
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            if (!phoneNumber) {
+                alert("请输入电话号码。");
+                return;
+            }
+            const formData = new FormData();
+            formData.append('phone', phoneNumber);
+            const response = await fetch(`http://localhost:8001/sensitive/auth/create`, {
+                method: 'POST',
+                body: formData
+            });
+            if (response.ok) {
+                const keyPair = await response.json();
+                document.getElementById('accessKey').innerText = keyPair.accessKey;
+                document.getElementById('secretKey').innerText = keyPair.secretKey;
+            } else {
+                alert("生成密钥失败，请重试。");
+            }
+        }
+
+        function copyToClipboard(id) {
+            const text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("复制成功！");
+            }).catch(err => {
+                alert("复制失败，请手动复制。");
+            });
+        }
+    </script>
+</head>
+<body>
+<h1>密钥生成器</h1>
+<label for="phoneNumber">电话号码：</label>
+<input type="text" id="phoneNumber" placeholder="请输入您的电话号码">
+<button onclick="generateKey()">生成密钥</button>
+<h2>访问密钥</h2>
+<pre id="accessKey"></pre>
+<button onclick="copyToClipboard('accessKey')">复制访问密钥</button>
+<h2>秘密密钥</h2>
+<pre id="secretKey"></pre>
+<button onclick="copyToClipboard('secretKey')">复制秘密密钥</button>
+</body>
+</html>
