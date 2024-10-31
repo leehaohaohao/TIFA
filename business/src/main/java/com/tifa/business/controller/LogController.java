@@ -76,6 +76,7 @@ public class LogController {
         if(!DigestUtils.md5DigestAsHex(loginCo.getPassword().getBytes()).equals(logInfoDto.getPassword())){
             throw new BusinessException(ExceptionConstants.SERVER_ERROR);
         }
+        //TODO 登陆尝试次数限制
         UserContext userContext = getUserContext(request);
         userContext.setId(logInfoDto.getId());
         // 生成token
@@ -121,6 +122,7 @@ public class LogController {
         if(!checkEmail(registerCo.getEmail()) || !checkPassword(registerCo.getPassword())){
             throw new BusinessException(ExceptionConstants.INVALID_REGISTER_INFO);
         }
+        //TODO 验证邮箱验证码
         UserInfoDto userInfoDto = new UserInfoDto();
         userInfoDto.setEmail(registerCo.getEmail());
         userInfoDto.setPassword(DigestUtils.md5DigestAsHex(registerCo.getPassword().getBytes()));

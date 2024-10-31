@@ -20,4 +20,6 @@ public class RegisterCo {
     private String code;
     //验证码id
     private String codeId;
+    //邮箱验证码
+    private String emailCode;
 }
