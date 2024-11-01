@@ -1,4 +1,4 @@
-package com.tifa.common.entity.po;
+package com.tifa.common.base;
 
 import lombok.Data;
 

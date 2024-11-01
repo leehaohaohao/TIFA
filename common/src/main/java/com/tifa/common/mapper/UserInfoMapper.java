@@ -3,6 +3,9 @@ package com.tifa.common.mapper;
 import com.tifa.common.entity.dto.UserInfoDto;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * 用户表
  *
@@ -14,4 +17,5 @@ public interface UserInfoMapper {
     UserInfoDto selectUserById(Long id);
     UserInfoDto selectUserByEmail(String email);
     Integer insertUser(UserInfoDto userInfoDto);
+    List<UserInfoDto> selectUsersByIds(@Param("list") Set<String> ids);
 }

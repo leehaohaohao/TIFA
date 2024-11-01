@@ -1,4 +1,4 @@
-package com.tifa.common.entity.dto;
+package com.tifa.common.base;
 
 import cn.hutool.core.util.StrUtil;
 import com.tifa.common.enums.CodeEnum;

@@ -1,4 +1,4 @@
-package com.tifa.common.entity.po;
+package com.tifa.common.base;
 
 /**
  * 业务异常

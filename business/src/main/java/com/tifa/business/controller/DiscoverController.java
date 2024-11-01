@@ -1,11 +1,16 @@
 package com.tifa.business.controller;
 
-import com.tifa.common.entity.dto.ResponsePack;
-import com.tifa.common.mapper.AuditMapper;
+import com.tifa.business.service.DiscoverService;
+import com.tifa.common.base.BusinessException;
+import com.tifa.common.base.PageVo;
+import com.tifa.common.base.ResponsePack;
+import com.tifa.common.constants.ExceptionConstants;
+import com.tifa.common.entity.dto.ObjSellDto;
+import com.tifa.common.entity.query.ObjSellQuery;
+import com.tifa.common.mapper.ObjSellMapper;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 /**
  * 发现页面控制器
  *
@@ -17,14 +22,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/discover")
 @AllArgsConstructor
 public class DiscoverController {
-    private final AuditMapper auditMapper;
+    private final DiscoverService discoverService;
 
     /**
      * 发现列表
+     * @param pageVo
      * @return
      */
-    @GetMapping("/list/select")
-    public ResponsePack listSelect() {
-        return ResponsePack.success(auditMapper.selectById("A1851247470169407488"));
+    @PostMapping("/list/select")
+    public ResponsePack listSelect(@RequestBody PageVo pageVo) throws BusinessException {
+        if(pageVo.getPageNum() == null || pageVo.getPageSize() == null){
+            throw new BusinessException(ExceptionConstants.INVALID_PARAMETER);
+        }
+        return ResponsePack.success(discoverService.listSelect(pageVo));
     }
 }

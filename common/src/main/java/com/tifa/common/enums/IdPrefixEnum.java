@@ -15,6 +15,7 @@ public enum IdPrefixEnum {
     OBJ("O"),
     MODEL("M"),
     AUDIT("A"),
+    SELL("S"),
     ;
 
     private final String prefix;

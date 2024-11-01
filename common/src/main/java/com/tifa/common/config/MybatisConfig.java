@@ -2,6 +2,7 @@ package com.tifa.common.config;
 
 import com.tifa.common.entity.dto.AuditDto;
 import com.tifa.common.handler.mybatis.EnumTypeHandlerFactory;
+import com.tifa.common.handler.mybatis.JsonArrayTypeHandler;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -51,6 +52,7 @@ public class MybatisConfig {
                 AuditDto.AuditType.class,
                 AuditDto.AuditStatus.class
         });
+        /*typeHandlerRegistry.register(java.util.List.class, JsonArrayTypeHandler.class);*/
         return sessionFactoryBean.getObject();
     }
 }

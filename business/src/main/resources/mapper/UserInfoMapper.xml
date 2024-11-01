@@ -93,6 +93,13 @@
             </if>
         </trim>
     </insert>
-
+    <select id="selectUsersByIds" resultMap="base_result_map">
+        select <include refid="base_column_list"/>
+        from user_info
+        where id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
 
 </mapper>

@@ -8,7 +8,7 @@ package com.lihao.core;
  * @since 1.0
  */
 public enum SensitiveEnum {
-    TEXT_CHECK(1, "/text/check"),
+    TEXT_CHECK(1, "/cover/check"),
     IMAGE_CHECK(2, "/image/check"),
     AUDIO(3, "音频"),
     VIDEO(4, "视频"),

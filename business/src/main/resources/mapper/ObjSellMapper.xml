@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tifa.common.mapper.ObjSellMapper">
+    <resultMap id="base_result_map" type="com.tifa.common.entity.dto.ObjSellDto">
+        <id property="id" column="id"/>
+        <result property="model" column="model"/>
+        <result property="cover" column="cover"/>
+        <result property="userId" column="user_id"/>
+        <result property="views" column="views"/>
+        <result property="favorites" column="favorites"/>
+        <result property="tags" column="tags"/>
+        <result property="sellRules" column="sell_rules" typeHandler="com.tifa.common.handler.mybatis.BaseEnumTypeHandler"/>
+        <result property="sellStatus" column="sell_status" typeHandler="com.tifa.common.handler.mybatis.BaseEnumTypeHandler"/>
+        <result property="prices" column="prices"/>
+        <result property="shelfDate" column="shelf_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="description" column="description"/>
+        <result property="tagsStr" column="tags_str"/>
+    </resultMap>
+    <sql id="base_column_list">
+        id,model,cover,user_id,views,favorites,tags,sell_rules,sell_status,prices,shelf_date,update_date,description
+    </sql>
+    <sql id="base_query_condition">
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="sellStatus != null">
+                and sell_status = #{sellStatus}
+            </if>
+            <if test="sellRules != null">
+                and sell_rules = #{sellRules}
+            </if>
+            <if test="topPrice != null">
+                and prices &lt;= #{topPrice}
+            </if>
+            <if test="bottomPrice != null">
+                and prices &gt;= #{bottomPrice}
+            </if>
+            <if test="tags != null and tags != '' ">
+                and tags like concat('%',#{tags},'%')
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+        </where>
+    </sql>
+    <select id="selectList" resultMap="base_result_map">
+        select <include refid="base_column_list"/> from obj_sell
+        <include refid="base_query_condition"/>
+        <if test="orderBy != null">
+            order by ${orderBy}
+        </if>
+    </select>
+    <select id="selectById" resultMap="base_result_map">
+        select <include refid="base_column_list"/> from obj_sell where id = #{id}
+    </select>
+    <insert id="insert" parameterType="com.tifa.common.entity.dto.ObjSellDto">
+        insert into obj_sell(id,model,cover,user_id,tags,sell_rules,prices,shelf_date,description)
+        values(#{id},#{model},#{cover},#{userId},#{tags},#{sellRules},#{prices},#{shelfDate},#{description})
+    </insert>
+    <update id="updateById">
+        update obj_sell
+        <set>
+            <if test="bean.model != null">
+                model = #{bean.model},
+            </if>
+            <if test="bean.cover != null">
+                cover = #{bean.cover},
+            </if>
+            <if test="bean.views != null">
+                views = #{bean.views},
+            </if>
+            <if test="bean.favorites != null">
+                favorites= #{bean.favorites},
+            </if>
+            <if test="bean.sellRules != null">
+                sell_rules = #{bean.sellRules},
+            </if>
+            <if test="bean.sellStatus != null">
+                sell_status = #{bean.sellStatus},
+            </if>
+            <if test="bean.prices != null">
+                prices = #{bean.prices},
+            </if>
+            <if test="bean.shelfDate != null">
+                shelf_date = #{bean.shelfDate},
+            </if>
+            <if test="bean.updateDate != null">
+                update_date = #{bean.updateDate},
+            </if>
+            <if test="bean.description != null">
+                description = #{bean.description},
+            </if>
+            <if test="bean.tags != null">
+                tags = #{bean.tags},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

@@ -50,4 +50,7 @@ public class IdUtils {
     public static String generateModelId() {
         return generateId(IdPrefixEnum.MODEL.getPrefix());
     }
+    public static String generateSellId() {
+        return generateId(IdPrefixEnum.SELL.getPrefix());
+    }
 }
