@@ -18,7 +18,7 @@ public class ObjSellCoverVo {
     private String cover;
     private int views;
     private int favorites;
-    private Date shelfDate;
+    private String shelfDate;
     private String avatar;
     private String username;
 }

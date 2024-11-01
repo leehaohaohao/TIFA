@@ -10,11 +10,11 @@ import com.tifa.common.entity.query.ObjSellQuery;
 import com.tifa.common.entity.vo.ObjSellCoverVo;
 import com.tifa.common.mapper.ObjSellMapper;
 import com.tifa.common.mapper.UserInfoMapper;
+import com.tifa.common.utils.DateUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -63,7 +63,7 @@ public class DiscoverServiceImpl implements DiscoverService {
             coverVo.setViews(objSellDto.getViews());
             coverVo.setUsername(userInfoDto.getUsername());
             coverVo.setAvatar(userInfoDto.getAvatar());
-            coverVo.setShelfDate(new Date(objSellDto.getShelfDate()));
+            coverVo.setShelfDate(DateUtils.formatToDate(objSellDto.getShelfDate()));
             return coverVo;
         }).collect(Collectors.toList());
         result.put("coverList", coverList);

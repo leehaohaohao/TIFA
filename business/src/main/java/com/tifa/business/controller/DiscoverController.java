@@ -5,9 +5,6 @@ import com.tifa.common.base.BusinessException;
 import com.tifa.common.base.PageVo;
 import com.tifa.common.base.ResponsePack;
 import com.tifa.common.constants.ExceptionConstants;
-import com.tifa.common.entity.dto.ObjSellDto;
-import com.tifa.common.entity.query.ObjSellQuery;
-import com.tifa.common.mapper.ObjSellMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
