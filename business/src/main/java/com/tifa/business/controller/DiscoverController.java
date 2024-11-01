@@ -1,6 +1,8 @@
 package com.tifa.business.controller;
 
 import com.tifa.common.entity.dto.ResponsePack;
+import com.tifa.common.mapper.AuditMapper;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,9 +15,16 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/discover")
+@AllArgsConstructor
 public class DiscoverController {
+    private final AuditMapper auditMapper;
+
+    /**
+     * 发现列表
+     * @return
+     */
     @GetMapping("/list/select")
     public ResponsePack listSelect() {
-        return ResponsePack.success("success");
+        return ResponsePack.success(auditMapper.selectById("A1851247470169407488"));
     }
 }

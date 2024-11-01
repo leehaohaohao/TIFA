@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tifa.common.mapper.AuditMapper">
+    <resultMap id="base_result_map" type="com.tifa.common.entity.dto.AuditDto">
+        <id property="id" column="id"/>
+        <result property="auditId" column="audit_id"/>
+        <result property="objId" column="obj_id"/>
+        <result property="auditStatus" column="status" typeHandler="com.tifa.common.handler.mybatis.BaseEnumTypeHandler"/>
+        <result property="comments" column="comments"/>
+        <result property="auditDate" column="audit_date"/>
+        <result property="auditType" column="audit_type" typeHandler="com.tifa.common.handler.mybatis.BaseEnumTypeHandler"/>
+    </resultMap>
+    <sql id="base_column_list">
+        id,audit_id,obj_id,status,comments,audit_date,audit_type
+    </sql>
+    <select id="selectById" resultMap="base_result_map">
+        select <include refid="base_column_list"/> from audit where id = #{id}
+    </select>
+    <select id="selectByAuditId" resultMap="base_result_map">
+        select <include refid="base_column_list"/> from audit where audit_id = #{auditId}
+    </select>
+    <insert id="insert" parameterType="com.tifa.common.entity.dto.AuditDto">
+        insert into audit(id,audit_id,obj_id,status,comments,audit_type)
+        values(#{id},#{auditId},#{objId},#{auditStatus},#{comments},#{auditType})
+    </insert>
+    <update id="update">
+        update audit
+        <set>
+            <if test="auditStatus != null">
+                status = #{auditStatus},
+            </if>
+            <if test="comments != null">
+                comments = #{comments},
+            </if>
+            <if test="auditDate != null">
+                audit_date = #{auditDate},
+            </if>
+            <if test="auditType != null">
+                audit_type = #{auditType},
+            </if>
+            <if test="auditId != null">
+                audit_id = #{auditId},
+            </if>
+            <if test="objId != null">
+                obj_id = #{objId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

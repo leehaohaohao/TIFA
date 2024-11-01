@@ -12,23 +12,15 @@ import lombok.Data;
 @Data
 public class ObjDto {
     // 模型id
-    private Long id;
+    private String id;
     // 图片地址
     private String img;
-    // 上传时间
-    private Long uploadDate;
     // 模型名称
     private String model;
     // 模型生成时间
     private Long generateDate;
     // 用户id
-    private Long userId;
-    // 标签
-    private String tags;
-    // 状态
-    private Integer status;
-    // 浏览量
-    private Integer views;
-    // 收藏量
-    private Integer favorites;
+    private String userId;
+    // 文本生成描述
+    private String text;
 }

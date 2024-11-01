@@ -1,4 +1,4 @@
-package com.tifa.common.entity.enums;
+package com.tifa.common.enums;
 
 import lombok.Getter;
 

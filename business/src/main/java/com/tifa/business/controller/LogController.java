@@ -1,6 +1,5 @@
 package com.tifa.business.controller;
 
-import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.tifa.common.config.SysConfig;
 import com.tifa.common.config.jwt.JwtProperty;
@@ -8,13 +7,14 @@ import com.tifa.common.config.jwt.JwtUtil;
 import com.tifa.common.entity.co.log.CodeCo;
 import com.tifa.common.entity.co.log.LoginCo;
 import com.tifa.common.entity.co.log.RegisterCo;
-import com.tifa.common.entity.constants.ExceptionConstants;
+import com.tifa.common.constants.ExceptionConstants;
 import com.tifa.common.entity.dto.ResponsePack;
 import com.tifa.common.entity.dto.UserInfoDto;
 import com.tifa.common.entity.po.BusinessException;
 import com.tifa.common.entity.po.UserContext;
 import com.tifa.common.entity.vo.CodeVo;
 import com.tifa.common.mapper.UserInfoMapper;
+import com.tifa.common.utils.IdUtils;
 import com.tifa.common.utils.NumUtils;
 import com.wf.captcha.SpecCaptcha;
 import jakarta.servlet.http.HttpServletRequest;
@@ -126,7 +126,7 @@ public class LogController {
         UserInfoDto userInfoDto = new UserInfoDto();
         userInfoDto.setEmail(registerCo.getEmail());
         userInfoDto.setPassword(DigestUtils.md5DigestAsHex(registerCo.getPassword().getBytes()));
-        userInfoDto.setId(IdUtil.getSnowflakeNextId());
+        userInfoDto.setId(IdUtils.generateUserId());
         userInfoDto.setUsername(sysConfig.getDefaultUsername()+ NumUtils.getRandomNum(8));
         userInfoDto.setCreateDate(System.currentTimeMillis());
         if(!userInfoMapper.insertUser(userInfoDto).equals(1)){

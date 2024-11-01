@@ -11,7 +11,7 @@ import lombok.Data;
  */
 @Data
 public class UserContext {
-    private Long id;
+    private String id;
     private String ipv4;
     private String ipv6;
     private String proxyIp;

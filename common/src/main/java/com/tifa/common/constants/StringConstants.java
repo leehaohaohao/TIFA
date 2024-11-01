@@ -1,4 +1,4 @@
-package com.tifa.common.entity.constants;
+package com.tifa.common.constants;
 
 /**
  * 字符串常量

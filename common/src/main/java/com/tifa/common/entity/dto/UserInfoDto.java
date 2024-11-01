@@ -12,7 +12,7 @@ import lombok.Data;
 @Data
 public class UserInfoDto {
     // 用户id
-    private Long id;
+    private String id;
     // 手机号
     private String phone;
     // 用户名

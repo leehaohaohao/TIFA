@@ -1,7 +1,7 @@
 package com.tifa.common.entity.dto;
 
 import cn.hutool.core.util.StrUtil;
-import com.tifa.common.entity.enums.CodeEnum;
+import com.tifa.common.enums.CodeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
